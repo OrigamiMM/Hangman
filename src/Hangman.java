@@ -16,10 +16,16 @@ public class Hangman implements KeyListener{
 	ArrayList<String> words = new ArrayList<String>();
 	Stack<String> hangWords = new Stack<String>();
 	ArrayList<Integer> ranInts = new ArrayList<Integer>();
+	ArrayList<JLabel> labels;
 	Random ran = new Random();
+	ArrayList<String> theWord = new ArrayList<String>();
+	ArrayList<String> guessedC = new ArrayList<String>();
+	String word;
 	int counter = 0;
+	int kounter = 0;
 	int wanted;
-	String currentKey;
+	char currentKey;
+	JPanel panel = new JPanel();
 
 	public static void main(String[] args) {
 		String am = JOptionPane.showInputDialog("How may times do you want to play?");
@@ -101,31 +107,49 @@ public class Hangman implements KeyListener{
 		counter++;
 	}
 	void GUI() {
-		String word = hangWords.pop();
+		word = hangWords.pop();
 		JFrame frame = new JFrame();
-		JPanel panel = new JPanel();
-		JLabel label = new JLabel(word);
+		frame.addKeyListener(this);
+		labels = new ArrayList<JLabel>();
+		for (int i = 0; i < word.length(); i++) {
+			JLabel label = new JLabel(" _ ");
+			labels.add(label);
+			panel.add(labels.get(i));
+		}
 		frame.setVisible(true);
 		frame.add(panel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panel.add(label);
 		frame.pack();
-	
-	}
-	void checkKey(String word, String CurrentKey) {
-		
-	}
-
+		}
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		currentKey = arg0.getKeyChar();
+		System.out.println(currentKey);
+		for (int i = 0; i < word.length(); i++) {
+			if (currentKey == word.charAt(i)) {
+				String le = ""+currentKey;
+				guessedC.add(le);
+				JLabel l = labels.get(i);
+				l.setText(le);
+			}
+		}
+		if (kounter == word.length()) {
+			System.out.println("full");
+			word = hangWords.pop();
+			for (int i = 0; i < word.length(); i++) {
+				String le = ""+currentKey;
+				JLabel l = labels.get(i);
+				l.setText(le);
+			}
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		currentKey = "" + arg0.getKeyCode();
+		
+		
 	}
 
 	@Override
