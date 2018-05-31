@@ -12,20 +12,21 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class Hangman implements KeyListener{
+public class Hangman implements KeyListener {
 	ArrayList<String> words = new ArrayList<String>();
 	Stack<String> hangWords = new Stack<String>();
 	ArrayList<Integer> ranInts = new ArrayList<Integer>();
 	ArrayList<JLabel> labels;
 	Random ran = new Random();
 	ArrayList<String> theWord = new ArrayList<String>();
-	ArrayList<String> guessedC = new ArrayList<String>();
+	ArrayList<String> guessedC;
 	String word;
 	int counter = 0;
 	int kounter = 0;
 	int wanted;
+	JFrame frame;
 	char currentKey;
-	JPanel panel = new JPanel();
+	JPanel panel;
 
 	public static void main(String[] args) {
 		String am = JOptionPane.showInputDialog("How may times do you want to play?");
@@ -35,7 +36,7 @@ public class Hangman implements KeyListener{
 		System.out.println();
 		man.randomWord();
 		System.out.println();
-		man.GUI();
+		man.newWord();
 	}
 
 	void numbers(int amount) {
@@ -82,7 +83,7 @@ public class Hangman implements KeyListener{
 	}
 
 	void randomString(ArrayList list) {
-		while(!list.isEmpty()) {
+		while (!list.isEmpty()) {
 			int random = ran.nextInt(list.size());
 			hangWords.push(words.get(random));
 			list.remove(random);
@@ -106,9 +107,16 @@ public class Hangman implements KeyListener{
 		}
 		counter++;
 	}
-	void GUI() {
+
+	void newWord() {
+		if (hangWords.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Game Over, Good Game!");
+			System.exit(0);
+		}
+		guessedC = new ArrayList<String>();
 		word = hangWords.pop();
-		JFrame frame = new JFrame();
+		frame = new JFrame();
+		panel = new JPanel();
 		frame.addKeyListener(this);
 		labels = new ArrayList<JLabel>();
 		for (int i = 0; i < word.length(); i++) {
@@ -120,27 +128,31 @@ public class Hangman implements KeyListener{
 		frame.add(panel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
-		}
+		kounter = 0;
+	}
+
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		currentKey = arg0.getKeyChar();
 		System.out.println(currentKey);
-		for (int i = 0; i < word.length(); i++) {
-			if (currentKey == word.charAt(i)) {
-				String le = ""+currentKey;
-				guessedC.add(le);
-				JLabel l = labels.get(i);
-				l.setText(le);
-			}
-		}
-		if (kounter == word.length()) {
-			System.out.println("full");
-			word = hangWords.pop();
+		String le = "" + currentKey;
+		if (!guessedC.contains(le)) {
 			for (int i = 0; i < word.length(); i++) {
-				String le = ""+currentKey;
-				JLabel l = labels.get(i);
-				l.setText(le);
+				if (currentKey == word.charAt(i)) {
+					guessedC.add(le);
+					JLabel l = labels.get(i);
+					l.setText(le);
+
+					kounter++;
+
+				}
+			}
+			if (kounter == word.length()) {
+				System.out.println("full");
+				JOptionPane.showMessageDialog(null, "Correct!, the word was " + word);
+				frame.dispose();
+				newWord();
 			}
 		}
 	}
@@ -148,13 +160,12 @@ public class Hangman implements KeyListener{
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
-		
+
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
